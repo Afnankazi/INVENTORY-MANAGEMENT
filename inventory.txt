@@ -1,1 +1,5 @@
-2663472,Asus VivoBook 15,15,Laptop,25000.00,30000.00
+1001,Smart LED TV,45,Electronics,18000.00,25000.00
+1002,Wireless Bluetooth Headphones,100,Electronics,2200.00,3500.00
+1003,Laptop (15-inch Core i7),5,Electronics,60000.00,75000.00
+1004, Smart Home Security Camera,80,Electronics,4000.00,5500.00
+1005,Portable External Hard Drive (2TB),30,Electronics,5500.00,7500.00
