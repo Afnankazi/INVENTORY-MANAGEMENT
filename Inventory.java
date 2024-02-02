@@ -1,6 +1,7 @@
 // App's External Imports
 
 import java.io.*;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -73,50 +74,86 @@ class Product {
 }
 
 public class Inventory {
+    private String invoke_method_type;
     private static ArrayList<Product> inventory = new ArrayList<>();
+    private static ArrayList<Product> invoice = new ArrayList<>();
     private static final String FILE_PATH = "inventory.txt";
     private static final Scanner scanner = new Scanner(System.in);
+
+    Inventory() {
+        invoke_method_type = "inventory";
+    }
+
+    Inventory(String method_type) {
+        invoke_method_type = method_type;
+    }
 
     public void main() {
         fetch_inventory();
 
         while (true) {
-            display_menu();
+            display_menu(invoke_method_type);
 
             int choice = scanner.nextInt();
             scanner.nextLine();
 
-            switch (choice) {
-                case 1:
-                    add_product();
-                    break;
-                case 2:
-                    modify_product();
-                    break;
-                case 3:
-                    delete_product();
-                    break;
-                case 4:
-                    display_inventory();
-                    break;
-                case 5:
-                    save_inventory();
-                    System.out.println("\n\t\tExiting program. Thank You!");
-                    System.exit(0);
-                default:
-                    System.out.println("\t\tInvalid choice. Please try again.");
+            if (Objects.equals(invoke_method_type, "inventory")) {
+                switch (choice) {
+                    case 1:
+                        add_product();
+                        break;
+                    case 2:
+                        modify_product();
+                        break;
+                    case 3:
+                        delete_product();
+                        break;
+                    case 4:
+                        display_inventory();
+                        break;
+                    case 5:
+                        save_inventory();
+                        System.out.println("\n\t\tExiting program. Thank You!");
+                        System.exit(0);
+                    default:
+                        System.out.println("\t\tInvalid choice. Please try again.");
+                }
+            } else {
+                switch (choice) {
+                    case 1:
+                        generate_invoice();
+                        break;
+                    case 2:
+                        print_invoice();
+                        break;
+                    case 3:
+                        save_inventory();
+                        System.out.println("\n\t\tExiting program. Thank You!");
+                        System.exit(0);
+                    default:
+                        System.out.println("\t\tInvalid choice. Please try again.");
+                }
             }
         }
     }
 
-    private static void display_menu() {
-        System.out.println("\n\t================================================== Welcome To AJ Electronics Inventory ==================================================");
-        System.out.println("\n\t\t1) Add Product");
-        System.out.println("\t\t2) Modify Product");
-        System.out.println("\t\t3) Delete Product");
-        System.out.println("\t\t4) Display Inventory");
-        System.out.println("\t\t5) Save and Exit");
-        System.out.print("\n\t\tEnter your choice: ");
+    private static void display_menu(String method_type) {
+        if (Objects.equals(method_type, "inventory")) {
+            System.out.println("\n\t================================================== Welcome To AJ Electronics Inventory ==================================================");
+            System.out.println("\n\t\t1) Add Product");
+            System.out.println("\t\t2) Modify Product");
+            System.out.println("\t\t3) Delete Product");
+            System.out.println("\t\t4) Display Inventory");
+            System.out.println("\t\t5) Save and Exit");
+            System.out.print("\n\t\tEnter your choice: ");
+        } else {
+            System.out.println("\n\t================================================== Welcome To AJ Electronics ==================================================");
+            System.out.println("\n\t\t1) Generate Invoice");
+            System.out.println("\t\t2) Print Invoice");
+            System.out.println("\t\t3) Save and Exit");
+            System.out.print("\n\t\tEnter your choice: ");
+        }
+
     }
 
     private static void add_product() {
@@ -157,15 +194,15 @@ public class Inventory {
                 int new_quantity = scanner.nextInt();
                 product.set_quantity(new_quantity);
 
-                System.out.format("\t\tEnter new category (previous: %s): ",product.get_category());
+                System.out.format("\t\tEnter new category (previous: %s): ", product.get_category());
                 String new_category = scanner.next();
                 product.set_category(new_category);
 
-                System.out.format("\t\tEnter new buying price (previous: Rs %.2f): Rs ",product.get_buying_price());
+                System.out.format("\t\tEnter new buying price (previous: Rs %.2f): Rs ", product.get_buying_price());
                 double new_buying_price = scanner.nextDouble();
                 product.set_buying_price(new_buying_price);
 
-                System.out.format("\t\tEnter new selling price (previous: Rs %.2f): Rs ",product.get_selling_price());
+                System.out.format("\t\tEnter new selling price (previous: Rs %.2f): Rs ", product.get_selling_price());
                 double new_selling_price = scanner.nextDouble();
                 product.set_selling_price(new_selling_price);
 
@@ -174,7 +211,6 @@ public class Inventory {
             }
         }
 
-        System.out.println("\nOps! Product not found with ID " + id_to_modify);
         System.out.format("\n\t\t<------------------- Ops! Product not found with ID: %d ----------------------->", id_to_modify);
     }
 
@@ -195,13 +231,58 @@ public class Inventory {
         System.out.format("\n\t\t<------------------- Ops! Product not found with ID: %d ----------------------->", id_to_delete);
     }
 
-    private static void display_inventory() {
+    static void display_inventory() {
         System.out.println("\n\t\t<------------------- Inventory ----------------------->");
         if (inventory.isEmpty()) {
             System.out.println("\n\t\t<------------------- Ops! Inventory is empty ----------------------->");
         } else {
             System.out.format("\t\t+----+----------------------+----------+----------------------+----------------------+----------------------+\n" + "\t\t| ID | Name                 | Quantity | Category             | Buying Price         | Selling Price        |\n" + "\t\t+----+----------------------+----------+----------------------+----------------------+----------------------+\n");
             for (Product product : inventory) {
+                System.out.println(product.convert_to_string());
+            }
+            System.out.format("\t\t+----+----------------------+----------+----------------------+----------------------+----------------------+");
+        }
+    }
+
+    private static void generate_invoice() {
+        System.out.println("\n\t\t<------------------- Generate Invoice ----------------------->");
+
+        while (true) {
+            System.out.print("\n\t\tEnter the product ID: ");
+            int product_id = scanner.nextInt();
+            scanner.nextLine();
+
+            if (product_id == 0) {
+                break;
+            }
+
+            for (Product product : inventory) {
+                if (product.get_id() == product_id) {
+                    if (product.get_quantity() != 0) {
+                        int previous_quantity = product.get_quantity();
+                        System.out.format("\t\tEnter the quantity (available: %d): ", previous_quantity);
+                        int new_quantity = scanner.nextInt();
+                        product.set_quantity(previous_quantity - new_quantity);
+
+                        Product purchased_product = new Product(product.get_id(), product.get_name(), product.get_quantity(), product.get_category(), product.get_buying_price(), product.get_selling_price());
+                        invoice.add(purchased_product);
+                    } else {
+                        System.out.println("\n\t\t<------------------- Product Out of Stock ----------------------->");
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private static void print_invoice() {
+        System.out.println("\n\t\t<------------------- Invoice ----------------------->");
+
+        if (inventory.isEmpty()) {
+            System.out.println("\n\t\t<------------------- Ops! Your cart is currently empty ----------------------->");
+        } else {
+            System.out.format("\t\t+----+----------------------+----------+----------------------+----------------------+----------------------+\n" + "\t\t| ID | Name                 | Quantity | Category             | Buying Price         | Selling Price        |\n" + "\t\t+----+----------------------+----------+----------------------+----------------------+----------------------+\n");
+            for (Product product : invoice) {
                 System.out.println(product.convert_to_string());
             }
             System.out.format("\t\t+----+----------------------+----------+----------------------+----------------------+----------------------+");

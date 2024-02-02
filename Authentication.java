@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Authentication {
-    public static final int TOTAL_USERS = 2;
+    public static final int TOTAL_USERS = 3;
 
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
@@ -50,10 +50,10 @@ public class Authentication {
                     Path[] path = new Path[]{Paths.get("authentication.txt")};
                     Scanner scan2 = new Scanner(System.in);
                     System.out.println("\n");
-                    System.out.println("invalid user name or pass");
-                    System.out.println("enter username");
+                    System.out.println("Invalid user name or password");
+                    System.out.print("Enter yor name:- ");
                     String u = scan2.nextLine();
-                    System.out.println("enter password");
+                    System.out.print("Enter your password:- ");
                     String p = scan2.nextLine();
                     loadacc(path, u, p);
                     scan2.close();
@@ -72,13 +72,14 @@ public class Authentication {
 
     public static void owner(String words) {
         System.out.format("\n\t\t<------------------- Welcome %s ----------------------->", words);
-        Inventory innventory_object = new Inventory();
-        innventory_object.main();
+        Inventory inventory_object = new Inventory("inventory");
+        inventory_object.main();
     }
 
     public static void employe(String words) {
-        System.out.println("welcome " + words);
-        //logic
+        System.out.format("\n\t\t<------------------- Welcome %s ----------------------->", words);
+        Inventory inventory_object = new Inventory("invoice");
+        inventory_object.main();
     }
 
 
